@@ -70,6 +70,29 @@ server.post('/api/users/', (req, res) => {
     };
 })
 
+server.put('/api/users/:id', (req, res) => {
+    const { name, bio } = req.body;
+    if ( name || bio ) {
+        db.update(req.params.id, req.body)
+            .then(data => {
+                if (data) {
+                    res.status(200)
+                        .json(data)
+                } else {
+                    res.status(404)
+                        .json({ error: 'The user with the specified ID does not exist.' })
+                }
+            })
+            .catch(err => {
+                res.status(500)
+                    .json({ error: 'The user information could not be modified.' })
+            })
+    } else {
+        res.status(400)
+            .json({ error: 'Please provide name and bio for the user.' })
+    };
+})
+
 server.listen(port, () => {
     console.log('Listening on port ' + port);
 })
